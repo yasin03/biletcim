@@ -1,18 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { auth } from "../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Loading from "../components/Loading";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Toast } from "react-native-popup-confirm-toast";
 
 const Login = () => {
   const [hidePassword, setHidePassword] = useState(true);
@@ -25,7 +20,17 @@ const Login = () => {
   const _handleSubmit = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        console.log("User account created & signed in!");
+        Popup.show({
+          type: "success",
+          title: "Dikkat!",
+          textBody: "Başarıyla giriş yapıldı",
+          buttonText: "Tamam",
+          okButtonStyle: { backgroundColor: "#F87171" },
+          callback: () => {
+            Popup.hide();
+            navigation.navigate("Home");
+          },
+        });
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {

@@ -64,7 +64,7 @@ const Home = () => {
     if (nereden && nereye) {
       setLoading(true);
       navigation.navigate("Sefer", { sefer });
-      
+
     } else {
       return Alert.alert(
         "Kalkış yeri seçilmedi!",
@@ -106,6 +106,9 @@ const Home = () => {
                 borderBottomColor: "grey",
                 borderBottomWidth: 2,
                 backgroundColor: "white",
+              }}
+              dropdownStyle={{
+                borderRadius: 10,
               }}
               onSelect={(selectedItem, index) => {
                 setNereden(selectedItem);

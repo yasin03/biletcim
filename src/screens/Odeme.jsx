@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import { Alert, TouchableOpacity, Text, TextInput, View } from "react-native";
 import { Button } from "react-native-paper";
 import { CreditCardInput } from "react-native-credit-card-input";
-import { Root, Popup } from "popup-ui";
+import { Popup } from "react-native-popup-confirm-toast";
+import { useNavigation } from "@react-navigation/native";
 
 const Odeme = ({ route }) => {
   const { yeniSefer } = route.params;
-  console.log(yeniSefer);
+
   const [cardNumber, setCardNumber] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
+
+  const navigation = useNavigation();
 
   const handlePayment = (formData) => {
     setCardNumber(formData.values.number);
@@ -17,7 +20,35 @@ const Odeme = ({ route }) => {
     setCvv(formData.values.cvc);
   };
 
-  const handleSatinAl = () => {};
+  const handleSatinAl = () => {
+    if (cardNumber && expiryDate && cvv) {
+      Popup.show({
+        type: "success",
+        title: "Dikkat!",
+        textBody: "Satın alma işleminiz başarıyla gerçekleştirildi!",
+        buttonText: "Tamam",
+        okButtonStyle: { backgroundColor: "#F87171" },
+        callback: () => {
+          Popup.hide();
+          navigation.navigate("Home");
+        },
+      });
+    }else{
+     Popup.show({
+       type: "confirm",
+       title: "Dikkat!",
+       textBody: "Lütfen kart bilgilerini giriniz!",
+       buttonText: "Tamam",
+       okButtonStyle: { backgroundColor: "#F87171" },
+       callback: () => {
+         Popup.hide();
+         navigation.navigate("Home");
+       },
+     });
+    }
+
+    
+  };
 
   const _onFocus = (field) => console.log("focusing", field);
   return (
@@ -38,28 +69,11 @@ const Odeme = ({ route }) => {
           icon=""
           mode="contained"
           className="bg-rose-500 text-white w-full"
-          onPress={handleSatinAl}
+          onPress={() => handleSatinAl()}
         >
           Satın Al
         </Button>
       </View>
-        <View>
-          <TouchableOpacity
-            onPress={() =>
-              Popup.show({
-                type: "Success",
-                title: "Upload complete",
-                button: false,
-                textBody: "Congrats! Your upload successfully done",
-                buttonText: "Ok",
-                callback: () => Popup.hide(),
-              })
-            }
-          >
-            <Text>Open Popup</Text>
-          </TouchableOpacity>
-        </View>
-
     </View>
   );
 };

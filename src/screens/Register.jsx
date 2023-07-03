@@ -31,8 +31,17 @@ const Register = () => {
         user.updateProfile({
           displayName:values.fullName,
         }) */
-        Alert.alert("User created successfully!");
-        navigation.navigate("Login");
+         Popup.show({
+           type: "success",
+           title: "Dikkat!",
+           textBody: "Başarıyla kaydedildi!",
+           buttonText: "Tamam",
+           okButtonStyle: { backgroundColor: "#F87171" },
+           callback: () => {
+             Popup.hide();
+             navigation.navigate("Login");
+           },
+         });
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {

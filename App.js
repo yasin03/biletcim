@@ -1,10 +1,10 @@
 import "./src/config/firebase";
 import Router from "./src/rooter";
-import { Root } from "popup-ui";
+import { Root as PopupRootProvider } from "react-native-popup-confirm-toast";
 export default function App() {
   return (
-    <Root>
+    <PopupRootProvider>
       <Router />
-    </Root>
+    </PopupRootProvider>
   );
 }

@@ -68,7 +68,7 @@ const SeferDetay = ({ route }) => {
             const seatNumber = index + 1;
             const isSelected = selectedSeats.includes(seatNumber);
             return (
-              <View>
+              <View key={index}>
                 {isSelected && showGenderPopup && (
                   <View className="absolute z-50 left-5 top-16 flex justify-center items-center rounded-xl ">
                     <View className="bg-gray-500 w-6 h-6 rotate-45 "></View>
