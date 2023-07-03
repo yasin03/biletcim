@@ -7,6 +7,7 @@ import Login from "../screens/Login";
 import Register from "../screens/Register";
 import Sefer from "../screens/Sefer";
 import SeferDetay from "../screens/SeferDetay";
+import Odeme from "../screens/Odeme";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,7 @@ const UserStack = () => {
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Sefer" component={Sefer} />
         <Stack.Screen name="SeferDetay" component={SeferDetay} />
+        <Stack.Screen name="Odeme" component={Odeme} />
       </Stack.Navigator>
     </NavigationContainer>
   );

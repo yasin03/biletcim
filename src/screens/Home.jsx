@@ -1,20 +1,20 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Alert, Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { RadioButton } from "react-native-paper";
 import SelectDropdown from "react-native-select-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { Button } from "react-native-paper";
 import Loading from "../components/Loading";
+import { formatDate } from "../utils/FormatDate";
 
 const Home = () => {
   const [checked, setChecked] = useState("tek");
   const [nereden, setNereden] = useState();
   const [nereye, setNereye] = useState();
-  const [dateGidis, setDateGidis] = useState(new Date());
-  const [dateDonus, setDateDonus] = useState(new Date());
+  const [dateGidis, setDateGidis] = useState(formatDate(new Date()));
+  const [dateDonus, setDateDonus] = useState(formatDate(new Date()));
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,26 +34,14 @@ const Home = () => {
     "Eskişehir",
   ];
 
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const handleGidis = (selectedDate) => {
+    setShow(false);
+    setDateGidis(formatDate(selectedDate));
   };
 
-  const formatDateGidis = dateGidis.toLocaleDateString("tr-TR", options);
-  const formatDateDonus = dateDonus.toLocaleDateString("tr-TR", options);
-  console.log(formatDateGidis + formatDateDonus);
-
-  const handleGidis = (event, selectedDate) => {
-    console.log(selectedDate);
+  const handleDonus = (selectedDate) => {
     setShow(false);
-    setDateGidis(selectedDate);
-  };
-  const handleDonus = (event, selectedDate) => {
-    
-    setShow(false);
-    setDateDonus(selectedDate);
+    setDateDonus(formatDate(selectedDate));
   };
 
   const showMode = (currentMode) => {
@@ -68,9 +56,23 @@ const Home = () => {
     checked,
     nereden,
     nereye,
-    formatDateGidis,
-    formatDateDonus,
+    dateGidis,
+    dateDonus,
   };
+  console.log("gidiş : " + dateGidis);
+  const handleSearch = () => {
+    if (nereden && nereye) {
+      setLoading(true);
+      navigation.navigate("Sefer", { sefer });
+      
+    } else {
+      return Alert.alert(
+        "Kalkış yeri seçilmedi!",
+        "Lütfen hareket yerini ve varış yerini seçiniz!"
+      );
+    }
+  };
+
   return (
     <View>
       {loading ? (
@@ -138,17 +140,19 @@ const Home = () => {
             />
           </View>
           <View className="mt-4 w-full">
-            <Button onPress={showDatepicker} mode="outlined" className="p-3">
-              <Text className="">Gidiş Tarihi </Text>
-              <Text className="text-rose-500">
-                {dateGidis.toLocaleDateString()}
-              </Text>
+            <Button
+              onPress={showDatepicker}
+              mode="outlined"
+              className="border-black-500 py-1"
+            >
+              <Text className="text-black">Gidiş Tarihi </Text>
+              <Text className="text-rose-500">{dateGidis}</Text>
             </Button>
 
             {show && (
               <DateTimePicker
-                testID="dateTimePicker"
-                value={dateGidis}
+                display="spinner"
+                value={new Date()}
                 mode={mode}
                 is24Hour={true}
                 onChange={handleGidis}
@@ -156,15 +160,19 @@ const Home = () => {
             )}
           </View>
           <View className={`w-full mt-4 ${checked === "tek" && "hidden"}`}>
-            <Button onPress={showDatepicker} mode="outlined" className="px-4">
-              <Text className="">Dönüş Tarihi </Text>
-              <Text className="text-rose-500">{formatDateDonus}</Text>
+            <Button
+              onPress={showDatepicker}
+              mode="outlined"
+              className="border-black-500 py-1"
+            >
+              <Text className="text-black">Dönüş Tarihi </Text>
+              <Text className="text-rose-500">{dateDonus}</Text>
             </Button>
 
             {show && (
               <DateTimePicker
                 testID="dateTimePicker"
-                value={dateDonus}
+                value={new Date()}
                 mode={mode}
                 is24Hour={true}
                 onChange={handleDonus}
@@ -176,13 +184,8 @@ const Home = () => {
               icon="magnify"
               loading={loading ? true : false}
               mode="contained"
-              className="bg-rose-500 text-white"
-              onPress={() => {
-                setLoading(true);
-                setTimeout(() => {
-                  navigation.navigate("Sefer", { sefer });
-                }, 3000);
-              }}
+              className="bg-rose-500 text-white w-full"
+              onPress={handleSearch}
             >
               Ara
             </Button>

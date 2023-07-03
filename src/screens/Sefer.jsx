@@ -121,12 +121,10 @@ const Sefer = ({ route }) => {
   const navigation = useNavigation();
   const { sefer } = route.params;
 
-  console.log(sefer);
-
   return (
     <SafeAreaView className="mx-4">
       <ScrollView>
-        <View className="bg-rose-200 py-6 rounded-bl-[100] rounded-br-[100]">
+        <View className="bg-rose-200 py-10 rounded-bl-[300] rounded-br-[300]">
           <View className="flex-row justify-between p-2 px-8">
             <Text className="font-bold text-xl text-rose-800">
               {sefer?.nereden}
@@ -137,10 +135,10 @@ const Sefer = ({ route }) => {
             </Text>
           </View>
           <Text className="font-semibold text-xl text-center">
-            {sefer?.formatDateGidis}
+            {sefer?.dateGidis}
           </Text>
           <Text className="font-semibold text-xl text-center">
-            {sefer?.formatDateDonus}
+            {sefer?.checked === "tek" ? "": sefer?.dateDonus}
           </Text>
         </View>
         <DataTable>
