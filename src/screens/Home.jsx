@@ -9,6 +9,11 @@ import { Button } from "react-native-paper";
 import Loading from "../components/Loading";
 import { formatDate } from "../utils/FormatDate";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import "firebase/compat/storage";
+
 const Home = () => {
   const [checked, setChecked] = useState("tek");
   const [nereden, setNereden] = useState();
@@ -19,6 +24,8 @@ const Home = () => {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+
+  const user = firebase.auth().currentUser;
 
   useEffect(() => {
     setLoading(false);
@@ -59,14 +66,13 @@ const Home = () => {
     dateGidis,
     dateDonus,
   };
-  console.log("gidiş : " + dateGidis);
+
   const handleSearch = () => {
     if (nereden && nereye) {
       setLoading(true);
       navigation.navigate("Sefer", { sefer });
-
     } else {
-      return Alert.alert(
+      Alert.alert(
         "Kalkış yeri seçilmedi!",
         "Lütfen hareket yerini ve varış yerini seçiniz!"
       );
@@ -81,7 +87,16 @@ const Home = () => {
         <View className="flex justify-center items-center mx-4 mt-12">
           <View className="flex flex-row justify-between items-center ">
             <View className="flex-row items-center">
-              <Text>Gidiş</Text>
+              <Button
+                title="logout"
+                onPress={() => {
+                  firebase.auth().signOut();
+                  navigation.replace("Login");
+                }}
+              >
+                Logout
+              </Button>
+              <Text>Gidişss</Text>
               <RadioButton
                 value="tek"
                 status={checked === "tek" ? "checked" : "unchecked"}

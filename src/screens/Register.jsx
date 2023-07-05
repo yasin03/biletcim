@@ -1,23 +1,20 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import {
-  Alert,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { createUserWithEmailAndPassword } from "@react-native-firebase/app";
-import { authentication } from "../config/firebase";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import "firebase/compat/storage";
+import { Toast } from "react-native-popup-confirm-toast";
 
 const Register = () => {
   const [hidePassword, setHidePassword] = useState(true);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   const navigation = useNavigation();
-  
 
   const signUp = async () => {
     if (email === "" || password === "") {
@@ -25,23 +22,44 @@ const Register = () => {
       return;
     }
 
-    await createUserWithEmailAndPassword(authentication, email, password)
-      .then(() => {
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((userCredentials) => {
         /*         const user = firebase.auth().currentUser;
         user.updateProfile({
           displayName:values.fullName,
         }) */
-         Popup.show({
-           type: "success",
-           title: "Dikkat!",
-           textBody: "Başarıyla kaydedildi!",
-           buttonText: "Tamam",
-           okButtonStyle: { backgroundColor: "#F87171" },
-           callback: () => {
-             Popup.hide();
-             navigation.navigate("Login");
-           },
-         });
+        const user = userCredentials.user;
+        user
+          .updateProfile({ displayName: displayName })
+          .then(() =>
+            Toast.show({
+              type: "success",
+              title: "Dikkat!",
+              text: "Kullanıcı Oluşturuldu!",
+              backgroundColor: "#22c55e",
+              timeColor: "#14532d",
+              timing: 3000,
+              position: "top",
+              onCloseComplete: () => {
+                navigation.navigate("Home");
+              },
+            })
+          )
+          .catch((error) => console.log(error.message));
+
+        /*         Popup.show({
+          type: "success",
+          title: "Dikkat!",
+          textBody: "Başarıyla kaydedildi!",
+          buttonText: "Tamam",
+          okButtonStyle: { backgroundColor: "#F87171" },
+          callback: () => {
+            Popup.hide();
+            navigation.navigate("Login");
+          },
+        }); */
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -63,12 +81,19 @@ const Register = () => {
           Bilet almanın yepyeni yolunu Biletcim ile keşfedin!
         </Text>
       </View>
-      <View className="w-9/12">
+      <View className="w-9/12 mt-12">
         <TextInput
           placeholder="Email"
           className="border border-gray-300 bg-white pl-3 py-3  rounded-md"
           onChangeText={(text) => setEmail(text)}
           keyboardType="email-address"
+        />
+      </View>
+      <View className="w-9/12 mt-4">
+        <TextInput
+          placeholder="Ad Soyad"
+          className="border border-gray-300 bg-white pl-3 py-3  rounded-md"
+          onChangeText={(text) => setDisplayName(text)}
         />
       </View>
       <View className="relative w-9/12 mt-4">
