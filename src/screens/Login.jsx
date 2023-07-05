@@ -12,10 +12,13 @@ import Loading from "../components/Loading";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Toast } from "react-native-popup-confirm-toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/storage";
+import { Alert } from "react-native";
 
 const Login = () => {
   const [hidePassword, setHidePassword] = useState(true);
@@ -31,14 +34,17 @@ const Login = () => {
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
+        console.log(user);
 
+        AsyncStorage.setItem("login", user.uid);
+        console.log("user ->", user.uid);
         Toast.show({
           type: "success",
           title: "Dikkat!",
           text: "Giriş Yapıldı!",
           backgroundColor: "#22c55e",
           timeColor: "#14532d",
-          timing: 3000,
+          timing: 2000,
           position: "top",
           onCloseComplete: () => {
             navigation.navigate("Home");
@@ -48,19 +54,21 @@ const Login = () => {
         });
       })
       .catch((error) => {
-        if (error.code === "auth/email-already-in-use") {
-          console.log("That email address is already in use!");
-        }
-
         if (error.code === "auth/invalid-email") {
           console.log("That email address is invalid!");
+          Alert.alert(
+            "Dikkat!",
+            "Geçersiz e-mail adresi tekrar giriş yapınız!"
+          );
         }
 
         if (error.code === "auth/user-not-found") {
           console.log("That user is not found!");
+          Alert.alert("Dikkat!", "Kullanıcı bulunamadı lütfen kayıt olunuz!");
         }
         if (error.code === "auth/wrong-password") {
           console.log("The password is incorrcet!");
+          Alert.alert("Dikkat!", "Yanlış şifre lütfen tekrar deneyiniz!");
         }
 
         console.error(error);

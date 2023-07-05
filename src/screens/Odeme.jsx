@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Alert, TouchableOpacity, Text, TextInput, View } from "react-native";
+import { Text, View } from "react-native";
 import { Button } from "react-native-paper";
-import { CreditCardInput } from "react-native-credit-card-input";
+
 import { Popup } from "react-native-popup-confirm-toast";
 import { useNavigation } from "@react-navigation/native";
 
@@ -33,37 +33,28 @@ const Odeme = ({ route }) => {
           navigation.navigate("Home");
         },
       });
-    }else{
-     Popup.show({
-       type: "confirm",
-       title: "Dikkat!",
-       textBody: "Lütfen kart bilgilerini giriniz!",
-       buttonText: "Tamam",
-       okButtonStyle: { backgroundColor: "#F87171" },
-       callback: () => {
-         Popup.hide();
-         navigation.navigate("Home");
-       },
-     });
+    } else {
+      Popup.show({
+        type: "confirm",
+        title: "Dikkat!",
+        textBody: "Lütfen kart bilgilerini giriniz!",
+        buttonText: "Tamam",
+        okButtonStyle: { backgroundColor: "#F87171" },
+        callback: () => {
+          Popup.hide();
+          navigation.navigate("Home");
+        },
+      });
     }
-
-    
   };
 
-  const _onFocus = (field) => console.log("focusing", field);
   return (
     <View className="mx-4">
       <Text className="text-center text-xl font-semibold mt-4">
         Ödeme Sayfası
       </Text>
       <Text>{yeniSefer}</Text>
-      <CreditCardInput
-        autoFocus
-        labels={{ number: "KART NUMARASI", expiry: "S.K.T.", cvc: "CVC/CCV" }}
-        allowScroll={true}
-        onChange={handlePayment}
-        onFocus={_onFocus}
-      />
+
       <View className="flex-row-reverse w-full mt-8">
         <Button
           icon=""

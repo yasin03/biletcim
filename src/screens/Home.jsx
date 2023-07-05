@@ -8,6 +8,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Button } from "react-native-paper";
 import Loading from "../components/Loading";
 import { formatDate } from "../utils/FormatDate";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -25,7 +26,8 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const user = firebase.auth().currentUser;
+  const user = AsyncStorage.getItem("login");
+  console.log("user : ", user);
 
   useEffect(() => {
     setLoading(false);
@@ -79,6 +81,11 @@ const Home = () => {
     }
   };
 
+  const handleLogout = () => {
+    AsyncStorage.clear();
+    navigation.navigate("Login");
+  };
+
   return (
     <View>
       {loading ? (
@@ -87,16 +94,7 @@ const Home = () => {
         <View className="flex justify-center items-center mx-4 mt-12">
           <View className="flex flex-row justify-between items-center ">
             <View className="flex-row items-center">
-              <Button
-                title="logout"
-                onPress={() => {
-                  firebase.auth().signOut();
-                  navigation.replace("Login");
-                }}
-              >
-                Logout
-              </Button>
-              <Text>Gidişss</Text>
+              <Text>Gidiş</Text>
               <RadioButton
                 value="tek"
                 status={checked === "tek" ? "checked" : "unchecked"}
@@ -206,6 +204,17 @@ const Home = () => {
               onPress={handleSearch}
             >
               Ara
+            </Button>
+          </View>
+          <View className="flex-row-reverse w-full mt-8">
+            <Button
+              icon="magnify"
+              loading={loading ? true : false}
+              mode="contained"
+              className="bg-rose-100 text-white w-full"
+              onPress={handleLogout}
+            >
+              Logout
             </Button>
           </View>
         </View>
